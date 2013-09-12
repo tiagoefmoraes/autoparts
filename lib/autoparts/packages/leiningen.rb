@@ -13,20 +13,20 @@ module Autoparts
       def install
         prefix_path.mkpath
         execute 'mv', archive_filename, prefix_path
-      end
 
-      def post_install
-        # setting up lein script is only required on a source install.
-        # this file would be bundled with the binary.
         if @source_install
           setup_lein_script
         end
       end
 
+      def post_install
+        if @source_install
+          execute 'sed', '-i', "s|^LEIN_JAR=.*\.jar|LEIN_JAR=#{prefix_path}/leiningen-#{version}.jar|g", lein_executable_path
+        end
+      end
+
       def setup_lein_script
         download_lein_script
-
-        execute 'sed', '-i', "s|^LEIN_JAR=.*\.jar|LEIN_JAR=#{prefix_path}/leiningen-#{version}.jar|g", tmp_lein_script_path
 
         bin_path.mkpath
         execute 'mv', tmp_lein_script_path, lein_executable_path
