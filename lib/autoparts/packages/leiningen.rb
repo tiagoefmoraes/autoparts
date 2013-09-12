@@ -14,9 +14,7 @@ module Autoparts
         prefix_path.mkpath
         execute 'mv', archive_filename, prefix_path
 
-        if @source_install
-          setup_lein_script
-        end
+        setup_lein_script
       end
 
       def post_install
